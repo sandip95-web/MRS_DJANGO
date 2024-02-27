@@ -1,0 +1,45 @@
+{% extends 'recommend/base.html' %}
+{% block body %}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-white">My List</h2>
+    <hr>
+
+    <!-- Movie list -->
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        {% if movies %}
+            {% for movie in movies %}
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="{{ movie.movie_logo.url }}" class="card-img-top" alt="{{ movie.title }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ movie.title }}</h5>
+                            <p class="card-text">{{ movie.genre }}</p>
+                            <a href="{% url 'detail' movie.id %}" class="btn btn-primary">Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-danger">
+                <strong>Sorry!</strong> No movies in your list.
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa; /* Set the background color to a light gray shade */
+    }
+
+    .card {
+        transition: transform 0.2s; /* Add a smooth transition effect to the cards */
+    }
+
+    .card:hover {
+        transform: scale(1.05); /* Enlarge the card on hover for a subtle effect */
+    }
+</style>
+
+{% endblock %}

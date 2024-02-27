@@ -1,0 +1,39 @@
+{% extends 'recommend/base.html' %}
+{% block title %}Log In{% endblock %}
+
+{% block body %}
+<div class="container">
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mt-5">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">Log In</h3>
+                    {% if error_message %}
+                        <p class="text-danger text-center"><strong>{{ error_message }}</strong></p>
+                    {% endif %}
+                    <form class="form-horizontal" role="form" action="#" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Username:</label>
+                            <input id="id_username" maxlength="30" name="username" type="text" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label">Password:</label>
+                            <input id="id_password" maxlength="30" name="password" type="password" class="form-control">
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    Don't have an account? <a href="{% url 'signup' %}">Click here</a> to register.
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
