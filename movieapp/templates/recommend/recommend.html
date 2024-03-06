@@ -2,7 +2,7 @@
 {% block body %}
 
 <div class="container">
-  <h2>Recommendations for you</h2>
+  <h2 class="text-primary">Recommendations for you</h2>
   <hr />
   <br />
 
@@ -23,7 +23,14 @@
         </div>
       </div>
     </div>
-    {% endfor %} {% endif %}
+    {% endfor %} 
+    {% else %}
+    <div class="col">
+      <div class="alert alert-danger" role="alert">
+        <strong>Sorry!</strong> "No data available for recommendations. Please rate some movies to get recommendations."
+      </div>
+    </div>
+    {% endif %}
   </div>
 
   {% if movie_list.has_other_pages %}

@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('Agg')
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from django.shortcuts import render, get_object_or_404, redirect
@@ -13,7 +15,6 @@ import matplotlib.pyplot as plt
 import os
 import csv
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-import numpy as np
 from wordcloud import WordCloud
 
 # Create your views here.
@@ -106,22 +107,33 @@ def detail(request, movie_id):
 
 
 # MyList functionality
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render
+from .models import Movie
+
 def watch(request):
-
-    if not request.user.is_authenticated:
-        return redirect("login")
-    if not request.user.is_active:
-        raise Http404
-
-    movies = Movie.objects.filter(mylist__watch=True,mylist__user=request.user)
+    movies_list = Movie.objects.filter(mylist__watch=True, mylist__user=request.user)
     query = request.GET.get('q')
 
     if query:
-        movies = Movie.objects.filter(Q(title__icontains=query)).distinct()
-        return render(request, 'recommend/watch.html', {'movies': movies})
+        movies_list = movies_list.filter(title__icontains=query).distinct()
+
+    paginator = Paginator(movies_list, 8)  # Show 10 movies per page
+    page = request.GET.get('page')
+
+    try:
+        movies = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        movies = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        movies = paginator.page(paginator.num_pages)
 
     return render(request, 'recommend/watch.html', {'movies': movies})
 
+def about(request):
+    return render(request, 'recommend/about.html')
 
 # To get similar movies based on user rating
 def get_similar(movie_name,rating,corrMatrix):
@@ -129,27 +141,21 @@ def get_similar(movie_name,rating,corrMatrix):
     similar_ratings = similar_ratings.sort_values(ascending=False)
     return similar_ratings
 
+print(matplotlib.__version__)
+
 # Recommendation Algorithm
 def recommend(request):
     if not request.user.is_authenticated:
         return redirect("login")
     if not request.user.is_active:
         raise Http404
+    plt.ioff()
 
-    movie_rating = pd.DataFrame(list(Myrating.objects.all().values()))
+    # Check if the user has rated any movies
+    user_has_rated_movies = Myrating.objects.filter(user=request.user).exists()
 
-    # Check if the DataFrame is not empty
-    if not movie_rating.empty:
-        print(movie_rating.columns)
-
-        new_user = movie_rating['user_id'].nunique()  # Use 'user_id' instead of 'user'
-        current_user_id = request.user.id
-
-        # if new user not rated any movie
-        if current_user_id > new_user:
-            movie = Movie.objects.get(id=19)
-            q = Myrating(user=request.user, movie=movie, rating=0)
-            q.save()
+    if user_has_rated_movies:
+        movie_rating = pd.DataFrame(list(Myrating.objects.all().values()))
 
         userRatings = movie_rating.pivot_table(index=['user_id'], columns=['movie_id'], values='rating')
         userRatings = userRatings.fillna(0, axis=1)
@@ -179,7 +185,7 @@ def recommend(request):
         movies_id_recommend = [movie_id for movie_id in total_similarity.index if movie_id not in movie_id_watched]
 
         # Sort movies by total similarity and get top recommendations
-        movies_id_recommend = sorted(movies_id_recommend, key=lambda x: total_similarity[x], reverse=True)[:10]
+        movies_id_recommend = sorted(movies_id_recommend, key=lambda x: total_similarity[x], reverse=True)[:100]
 
         # Print the top recommended movie IDs
         print("Top Recommended Movie IDs:")
@@ -314,11 +320,12 @@ def recommend(request):
 
         context = {'movie_list': movie_list, 'accuracy': accuracy}
     else:
-        # Handle the case when there is no data in the DataFrame
+        # Handle the case when the user has not rated any movies
         context = {'movie_list': []}
-        messages.warning(request, "No data available for recommendations. Please rate some movies to get personalized recommendations.")
+        messages.warning(request, "No data available for recommendations. Please rate some movies to get recommendations.")
 
     return render(request, 'recommend/recommend.html', context)
+
 
 
 

@@ -1,45 +1,107 @@
-{% extends 'recommend/base.html' %}
-{% block body %}
-
+{% extends 'recommend/base.html' %} {% block body %}
 <div class="container mt-5">
-    <h2 class="mb-4 text-white">My List</h2>
-    <hr>
+  <h2 class="mb-4 text-white">My List</h2>
+  <hr />
 
-    <!-- Movie list -->
-    <div class="row row-cols-1 row-cols-md-4 g-4">
-        {% if movies %}
-            {% for movie in movies %}
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="{{ movie.movie_logo.url }}" class="card-img-top" alt="{{ movie.title }}">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ movie.title }}</h5>
-                            <p class="card-text">{{ movie.genre }}</p>
-                            <a href="{% url 'detail' movie.id %}" class="btn btn-primary">Details</a>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <div class="alert alert-danger">
-                <strong>Sorry!</strong> No movies in your list.
-            </div>
-        {% endif %}
+  <!-- Movie list -->
+  <div class="row row-cols-1 row-cols-md-4 g-4">
+    {% if movies %} {% for movie in movies %}
+    <div class="col">
+      <div class="card h-100">
+        <img
+          src="{{ movie.movie_logo.url }}"
+          class="card-img-top"
+          alt="{{ movie.title }}"
+        />
+        <div class="card-body">
+          <h5 class="card-title">{{ movie.title }}</h5>
+          <p class="card-text">{{ movie.genre }}</p>
+          <a href="{% url 'detail' movie.id %}" class="btn btn-primary"
+            >Details</a
+          >
+        </div>
+      </div>
     </div>
+    {% endfor %} {% else %}
+    <div class="col">
+      <div class="alert alert-danger" role="alert">
+        <strong>Sorry!</strong> No movies in your list.
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Pagination links -->
+  <div class="pagination mt-4">
+    <ul class="pagination justify-content-center">
+      {% if movies.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page=1" aria-label="First">&laquo; First</a>
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="?page={{ movies.previous_page_number }}"
+          aria-label="Previous"
+          >&lsaquo; Previous</a
+        >
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link">&laquo; First</span>
+      </li>
+      <li class="page-item disabled">
+        <span class="page-link">&lsaquo; Previous</span>
+      </li>
+      {% endif %}
+
+      <li class="page-item disabled">
+        <span class="page-link"
+          >Page {{ movies.number }} of {{ movies.paginator.num_pages }}</span
+        >
+      </li>
+
+      {% if movies.has_next %}
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="?page={{ movies.next_page_number }}"
+          aria-label="Next"
+          >Next &rsaquo;</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="?page={{ movies.paginator.num_pages }}"
+          aria-label="Last"
+          >Last &raquo;</a
+        >
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link">Next &rsaquo;</span>
+      </li>
+      <li class="page-item disabled">
+        <span class="page-link">Last &raquo;</span>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
 </div>
 
 <style>
-    body {
-        background-color: #f8f9fa; /* Set the background color to a light gray shade */
-    }
+  body {
+    background-color: #f8f9fa; /* Set the background color to a light gray shade */
+  }
 
-    .card {
-        transition: transform 0.2s; /* Add a smooth transition effect to the cards */
-    }
+  .card {
+    transition: transform 0.2s; /* Add a smooth transition effect to the cards */
+  }
 
-    .card:hover {
-        transform: scale(1.05); /* Enlarge the card on hover for a subtle effect */
-    }
+  .card:hover {
+    transform: scale(1.05); /* Enlarge the card on hover for a subtle effect */
+  }
 </style>
 
 {% endblock %}

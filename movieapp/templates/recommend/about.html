@@ -1,0 +1,48 @@
+{% extends 'recommend/base.html' %} {% block title %} About - Movie
+Recommendation {% endblock %} {% block body %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <h1 class="text-white text-center mb-4">About MovieMagnet</h1>
+      <p class="text-white">
+        Welcome to MovieMagnet, a platform designed to provide
+        personalized Movie based on collaborative filtering.
+        Users can rate movies and add them to their watchlist.
+      </p>
+
+      <h2 class="mt-5 text-white">How It Works</h2>
+      <p class="text-white">
+        Our recommendation system analyzes user ratings and preferences to
+        identify similar movies that users might enjoy. By leveraging
+        collaborative filtering techniques, we strive to deliver accurate and
+        relevant Movies tailored to each user's taste.
+      </p>
+
+      <h2 class="mt-5 text-white">Features</h2>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item text-black">
+          Personalized Movies based on collaborative filtering
+        </li>
+        <li class="list-group-item text-black">
+          Users can rate movies to improve recommendation accuracy
+        </li>
+        <li class="list-group-item text-black">
+          Users can add movies to their watchlist for future viewing
+        </li>
+      </ul>
+
+      <h2 class="mt-5 text-white">Contact Us</h2>
+      <p class="text-white">
+        If you have any questions, suggestions, or feedback, feel free to reach
+        out to us:
+      </p>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item text-black">
+          Email: www.gmail.com
+        </li>
+        <li class="list-group-item text-black">Phone: 123-456-7890</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
